@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Select Team Display</title>
+  <style>
+    body {
+      background-color: #111;
+      color: #fff;
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    h1 {
+      margin-bottom: 2rem;
+    }
+    button {
+      background-color: #222;
+      color: #fff;
+      border: 2px solid #555;
+      padding: 1rem 2rem;
+      font-size: 1.2rem;
+      margin: 0.5rem;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+    button:hover {
+      background-color: #444;
+    }
+  </style>
+</head>
+<body>
+  <h1>Select Team Screen</h1>
+  <button onclick="selectTeam('acorn')">Acorn</button>
+  <button onclick="selectTeam('central')">Central</button>
+  <button onclick="selectTeam('north')">North</button>
+  <button onclick="selectTeam('south')">South</button>
+
+  <script>
+    function selectTeam(team) {
+      localStorage.setItem("selectedTeam", team);
+      window.location.href = "rotator.html";
+    }
+  </script>
+</body>
+</html>
