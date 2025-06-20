@@ -47,7 +47,6 @@
     };
 
     const newsletterURL = "https://lrgcouk.sharepoint.com/sites/Hive/_layouts/15/Doc.aspx?sourcedoc={be163530-44b2-421a-952f-4ba320a7f63c}&action=embedview&wdAr=1.7777777777777777";
-
     const wallboardURL = wallboardURLs[team];
     const teaminfoboardURL = powerApp1URLs[team];
   </script>
@@ -69,7 +68,7 @@
   board.src = wallboardURL;
   rental.src = "rental-data.html";  // new
 
-  const frames = [teaminfoboard, board, newsletter, board, rental, board];
+  const frames = [newsletter, rental, teaminfoboard, board, newsletter, board, rental, board];
   let current = 0;
 
   function rotate() {
