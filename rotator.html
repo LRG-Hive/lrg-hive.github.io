@@ -109,25 +109,21 @@
       teaminfoboard: teaminfoboardURL,
       teamleaderboard: teamleaderboardURL,
       newsletter: newsletterURL,
-      wallboard: wallboardURL,
       rentalData: "rental-data.html"
     };
 
     let current = 0;
     let hasCompletedFirstLoop = false;
 
-    function rotate() {
-      const currentFrame = frames[current];
-      currentFrame.classList.remove("visible");
+    function showNextFrame() {
+      const previousFrame = frames[current];
+      previousFrame.classList.remove("visible");
 
-      if (hasCompletedFirstLoop) {
-        const id = currentFrame.id;
+      if (hasCompletedFirstLoop && previousFrame.id !== "wallboard") {
+        const id = previousFrame.id;
         const baseURL = frameURLs[id];
         if (baseURL) {
-          if (id === "wallboard") {
-            document.getElementById("wallboard-loading").style.display = "flex";
-          }
-          currentFrame.src = `${baseURL}?t=${Date.now()}`;
+          previousFrame.src = `${baseURL}?t=${Date.now()}`;
         }
       }
 
@@ -138,11 +134,12 @@
       if (current === 0 && !hasCompletedFirstLoop) {
         hasCompletedFirstLoop = true;
       }
-
-      setTimeout(rotate, screenDuration);
     }
 
-    // Hide wallboard loader once it's loaded *and* visible
+    // Start strict interval rotation (unaffected by iframe load times)
+    setInterval(showNextFrame, screenDuration);
+
+    // Wallboard load fallback
     board.addEventListener("load", () => {
       if (board.classList.contains("visible")) {
         document.getElementById("wallboard-loading").style.display = "none";
@@ -156,7 +153,8 @@
     board.src = wallboardURL;
     rental.src = "rental-data.html";
 
-    rotate();
+    // Show the first frame immediately
+    frames[current].classList.add("visible");
   </script>
 </body>
 </html>
