@@ -28,14 +28,6 @@
   </style>
 </head>
 <body>
-
-  <!-- All iframe elements -->
-  <iframe id="teaminfoboard" class="frame"></iframe>
-  <iframe id="teamleaderboard" class="frame"></iframe>
-  <iframe id="wallboard" class="frame"></iframe>
-  <iframe id="newsletter" class="frame"></iframe>
-  <iframe id="rentalData" class="frame"></iframe>
-
   <script>
     const team = localStorage.getItem("selectedTeam");
     if (!team) window.location.href = "index.html";
@@ -62,46 +54,74 @@
     };
 
     const newsletterURL = "https://apps.powerapps.com/play/e/default-7879fb74-9557-4f5d-961d-4400d1ca3f61/a/261ae689-9c1c-40ec-9eea-c1acbca593fc?tenantId=7879fb74-9557-4f5d-961d-4400d1ca3f61&source=iframe";
-
     const wallboardURL = wallboardURLs[team];
     const teaminfoboardURL = teaminfoboardURLs[team];
     const teamleaderboardURL = teamleaderboardURLs[team];
+  </script>
 
+  <iframe id="teaminfoboard" class="frame"></iframe>
+  <iframe id="teamleaderboard" class="frame"></iframe>
+  <iframe id="wallboard" class="frame"></iframe>
+  <iframe id="newsletter" class="frame"></iframe>
+  <iframe id="rentalData" class="frame"></iframe>
+
+  <script>
     const screenDuration = 60000;
-
     const teaminfoboard = document.getElementById("teaminfoboard");
     const teamleaderboard = document.getElementById("teamleaderboard");
     const newsletter = document.getElementById("newsletter");
     const board = document.getElementById("wallboard");
     const rental = document.getElementById("rentalData");
 
-    const frames = [board, teamleaderboard, board, teaminfoboard, board, newsletter, board, rental, board];
+    const frames = [teaminfoboard, board, teamleaderboard, board, newsletter, board, rental, board];
+
+    const frameReloadMap = {
+      teaminfoboard: teaminfoboardURL,
+      teamleaderboard: teamleaderboardURL,
+      newsletter: newsletterURL,
+      rentalData: "rental-data.html"
+    };
+
     let current = 0;
+    let reloadedThisCycle = new Set();
 
     function rotate() {
-      // Reload Power App frames only at the start of each full cycle
-      if (current === 0) {
-        console.log("Refreshing Power App iframes...");
-        teaminfoboard.src = teaminfoboardURL;
-        teamleaderboard.src = teamleaderboardURL;
-        newsletter.src = newsletterURL;
-        rental.src = "rental-data.html";
-      }
-
-      // Hide all frames
+      // Hide all
       frames.forEach(f => f.classList.remove("visible"));
 
-      // Show the current frame
-      frames[current].classList.add("visible");
+      // Show current
+      const currentFrame = frames[current];
+      currentFrame.classList.add("visible");
 
-      // Advance frame pointer
+      // Refresh hidden PowerApps if not already refreshed this loop
+      frames.forEach((f, i) => {
+        const id = f.id;
+        const isVisible = (i === current);
+        const needsReload = frameReloadMap.hasOwnProperty(id);
+
+        if (!isVisible && needsReload && !reloadedThisCycle.has(id)) {
+          f.src = frameReloadMap[id];
+          reloadedThisCycle.add(id);
+        }
+      });
+
       current = (current + 1) % frames.length;
 
-      // Repeat
+      // If we're at the start of a new loop, reset
+      if (current === 0) {
+        reloadedThisCycle.clear();
+      }
+
       setTimeout(rotate, screenDuration);
     }
 
-    // Start the loop
+    // Initial load
+    teaminfoboard.src = teaminfoboardURL;
+    teamleaderboard.src = teamleaderboardURL;
+    newsletter.src = newsletterURL;
+    board.src = wallboardURL;
+    rental.src = "rental-data.html";
+
     rotate();
   </script>
 </body>
