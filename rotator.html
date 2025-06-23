@@ -28,7 +28,7 @@
   </style>
 </head>
 <body>
-  <script>
+<script>
     const team = localStorage.getItem("selectedTeam");
     if (!team) window.location.href = "index.html";
 
@@ -57,71 +57,41 @@
     const wallboardURL = wallboardURLs[team];
     const teaminfoboardURL = teaminfoboardURLs[team];
     const teamleaderboardURL = teamleaderboardURLs[team];
-  </script>
 
-  <iframe id="teaminfoboard" class="frame"></iframe>
-  <iframe id="teamleaderboard" class="frame"></iframe>
-  <iframe id="wallboard" class="frame"></iframe>
-  <iframe id="newsletter" class="frame"></iframe>
-  <iframe id="rentalData" class="frame"></iframe>
-
-<script>
-  const screenDuration = 60000;
-
-  const teaminfoboard = document.getElementById("teaminfoboard");
-  const teamleaderboard = document.getElementById("teamleaderboard");
-  const newsletter = document.getElementById("newsletter");
-  const board = document.getElementById("wallboard");
-  const rental = document.getElementById("rentalData");
-
-  teaminfoboard.src = teaminfoboardURL;
-  teamleaderboard.src = teamleaderboardURL;
-  newsletter.src = newsletterURL;
-  board.src = wallboardURL;
-  rental.src = "rental-data.html";  // static first load
-
-  const frames = [board, teamleaderboard, board, teaminfoboard, board, newsletter, board, rental, board];
-
-  let current = 0;
-  let refreshedFrames = new Set();
-
-  function rotate() {
-    // Hide all
-    frames.forEach(f => f.classList.remove("visible"));
-
-    // Show current
-    const currentFrame = frames[current];
-    currentFrame.classList.add("visible");
-
-    // Refresh only if not already refreshed this cycle
-    if (!refreshedFrames.has(currentFrame.id)) {
-      if (currentFrame.id === "rentalData") {
-        rental.src = "rental-data.html";
-      }
-      if (currentFrame.id === "teaminfoboard") {
+    const screenDuration = 60000;
+  
+    const teaminfoboard = document.getElementById("teaminfoboard");
+    const teamleaderboard = document.getElementById("teamleaderboard");
+    const newsletter = document.getElementById("newsletter");
+    const board = document.getElementById("wallboard");
+    const rental = document.getElementById("rentalData");
+  
+    const frames = [board, teamleaderboard, board, teaminfoboard, board, newsletter, board, rental, board];
+    let current = 0;
+  
+    function rotate() {
+      // Reload all Power App iframes at start of loop
+      if (current === 0) {
+        console.log("Refreshing Power Apps...");
         teaminfoboard.src = teaminfoboardURL;
-      }
-      if (currentFrame.id === "teamleaderboard") {
         teamleaderboard.src = teamleaderboardURL;
-      }
-      if (currentFrame.id === "newsletter") {
         newsletter.src = newsletterURL;
+        rental.src = "rental-data.html"; // optional depending on how dynamic this is
       }
-
-      refreshedFrames.add(currentFrame.id);
+  
+      // Hide all frames
+      frames.forEach(f => f.classList.remove("visible"));
+  
+      // Show the current frame
+      frames[current].classList.add("visible");
+  
+      // Advance
+      current = (current + 1) % frames.length;
+  
+      setTimeout(rotate, screenDuration);
     }
-
-    current = (current + 1) % frames.length;
-
-    // If we’ve completed a full loop, clear refreshed flags
-    if (current === 0) {
-      refreshedFrames.clear();
-    }
-
-    setTimeout(rotate, screenDuration);
-  }
-
-  rotate();
-</script>
+  
+    rotate();
+  </script>
 </body>
 </html>
