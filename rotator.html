@@ -67,6 +67,7 @@
 
 <script>
   const screenDuration = 60000;
+
   const teaminfoboard = document.getElementById("teaminfoboard");
   const teamleaderboard = document.getElementById("teamleaderboard");
   const newsletter = document.getElementById("newsletter");
@@ -77,10 +78,12 @@
   teamleaderboard.src = teamleaderboardURL;
   newsletter.src = newsletterURL;
   board.src = wallboardURL;
-  rental.src = "rental-data.html";  // new
+  rental.src = "rental-data.html";  // static first load
 
   const frames = [teamleaderboard, board, teamleaderboard, teaminfoboard, board, newsletter, board, rental, board];
+
   let current = 0;
+  let refreshedFrames = new Set();
 
   function rotate() {
     // Hide all
@@ -90,17 +93,31 @@
     const currentFrame = frames[current];
     currentFrame.classList.add("visible");
 
-    // Refresh hidden ones that aren't visible
-    frames.forEach((f, i) => {
-      if (i !== current) {
-        if (f.id === "rentalData") f.src = "rental-data.html";  // refresh when hidden
-        if (f.id === "teaminfoboard") f.src = teaminfoboardURL;
-        if (f.id === "teamleaderboard") f.src = teamleaderboardURL;
-        if (f.id === "newsletter") f.src = newsletterURL;
+    // Refresh only if not already refreshed this cycle
+    if (!refreshedFrames.has(currentFrame.id)) {
+      if (currentFrame.id === "rentalData") {
+        rental.src = "rental-data.html";
       }
-    });
+      if (currentFrame.id === "teaminfoboard") {
+        teaminfoboard.src = teaminfoboardURL;
+      }
+      if (currentFrame.id === "teamleaderboard") {
+        teamleaderboard.src = teamleaderboardURL;
+      }
+      if (currentFrame.id === "newsletter") {
+        newsletter.src = newsletterURL;
+      }
+
+      refreshedFrames.add(currentFrame.id);
+    }
 
     current = (current + 1) % frames.length;
+
+    // If we’ve completed a full loop, clear refreshed flags
+    if (current === 0) {
+      refreshedFrames.clear();
+    }
+
     setTimeout(rotate, screenDuration);
   }
 
