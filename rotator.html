@@ -28,7 +28,15 @@
   </style>
 </head>
 <body>
-<script>
+
+  <!-- All iframe elements -->
+  <iframe id="teaminfoboard" class="frame"></iframe>
+  <iframe id="teamleaderboard" class="frame"></iframe>
+  <iframe id="wallboard" class="frame"></iframe>
+  <iframe id="newsletter" class="frame"></iframe>
+  <iframe id="rentalData" class="frame"></iframe>
+
+  <script>
     const team = localStorage.getItem("selectedTeam");
     if (!team) window.location.href = "index.html";
 
@@ -54,43 +62,46 @@
     };
 
     const newsletterURL = "https://apps.powerapps.com/play/e/default-7879fb74-9557-4f5d-961d-4400d1ca3f61/a/261ae689-9c1c-40ec-9eea-c1acbca593fc?tenantId=7879fb74-9557-4f5d-961d-4400d1ca3f61&source=iframe";
+
     const wallboardURL = wallboardURLs[team];
     const teaminfoboardURL = teaminfoboardURLs[team];
     const teamleaderboardURL = teamleaderboardURLs[team];
 
     const screenDuration = 60000;
-  
+
     const teaminfoboard = document.getElementById("teaminfoboard");
     const teamleaderboard = document.getElementById("teamleaderboard");
     const newsletter = document.getElementById("newsletter");
     const board = document.getElementById("wallboard");
     const rental = document.getElementById("rentalData");
-  
+
     const frames = [board, teamleaderboard, board, teaminfoboard, board, newsletter, board, rental, board];
     let current = 0;
-  
+
     function rotate() {
-      // Reload all Power App iframes at start of loop
+      // Reload Power App frames only at the start of each full cycle
       if (current === 0) {
-        console.log("Refreshing Power Apps...");
+        console.log("Refreshing Power App iframes...");
         teaminfoboard.src = teaminfoboardURL;
         teamleaderboard.src = teamleaderboardURL;
         newsletter.src = newsletterURL;
-        rental.src = "rental-data.html"; // optional depending on how dynamic this is
+        rental.src = "rental-data.html";
       }
-  
+
       // Hide all frames
       frames.forEach(f => f.classList.remove("visible"));
-  
+
       // Show the current frame
       frames[current].classList.add("visible");
-  
-      // Advance
+
+      // Advance frame pointer
       current = (current + 1) % frames.length;
-  
+
+      // Repeat
       setTimeout(rotate, screenDuration);
     }
-  
+
+    // Start the loop
     rotate();
   </script>
 </body>
