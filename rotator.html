@@ -10,7 +10,6 @@
       background: #000;
       overflow: hidden;
     }
-
     .frame {
       position: absolute;
       top: 0;
@@ -22,35 +21,9 @@
       pointer-events: none;
       transition: opacity 0.5s ease-in-out;
     }
-
     .visible {
       opacity: 1;
       pointer-events: auto;
-    }
-
-    #wallboard-wrapper {
-      position: absolute;
-      width: 100vw;
-      height: 100vh;
-      top: 0;
-      left: 0;
-      background: #000;
-    }
-
-    #wallboard-loading {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: #000;
-      color: white;
-      font-family: sans-serif;
-      font-size: 1.5em;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
     }
   </style>
 </head>
@@ -88,73 +61,50 @@
 
   <iframe id="teaminfoboard" class="frame"></iframe>
   <iframe id="teamleaderboard" class="frame"></iframe>
-  <div id="wallboard-wrapper">
-    <iframe id="wallboard" class="frame"></iframe>
-    <div id="wallboard-loading">Loading wallboard...</div>
-  </div>
+  <iframe id="wallboard" class="frame"></iframe>
   <iframe id="newsletter" class="frame"></iframe>
   <iframe id="rentalData" class="frame"></iframe>
 
-  <script>
-    const screenDuration = 60000;
-    const teaminfoboard = document.getElementById("teaminfoboard");
-    const teamleaderboard = document.getElementById("teamleaderboard");
-    const newsletter = document.getElementById("newsletter");
-    const board = document.getElementById("wallboard");
-    const rental = document.getElementById("rentalData");
+<script>
+  const screenDuration = 60000;
+  const teaminfoboard = document.getElementById("teaminfoboard");
+  const teamleaderboard = document.getElementById("teamleaderboard");
+  const newsletter = document.getElementById("newsletter");
+  const board = document.getElementById("wallboard");
+  const rental = document.getElementById("rentalData");
 
-    const frames = [board, teamleaderboard, board, teaminfoboard, board, newsletter, board, rental];
+  teaminfoboard.src = teaminfoboardURL;
+  teamleaderboard.src = teamleaderboardURL;
+  newsletter.src = newsletterURL;
+  board.src = wallboardURL;
+  rental.src = "rental-data.html";  // new
 
-    const frameURLs = {
-      teaminfoboard: teaminfoboardURL,
-      teamleaderboard: teamleaderboardURL,
-      newsletter: newsletterURL,
-      rentalData: "rental-data.html"
-    };
+  const frames = [teaminfoboard, board, teamleaderboard, board, newsletter, board, rental, board];
+  let current = 0;
 
-    let current = 0;
-    let hasCompletedFirstLoop = false;
+  function rotate() {
+    // Hide all
+    frames.forEach(f => f.classList.remove("visible"));
 
-    function showNextFrame() {
-      const previousFrame = frames[current];
-      previousFrame.classList.remove("visible");
+    // Show current
+    const currentFrame = frames[current];
+    currentFrame.classList.add("visible");
 
-      if (hasCompletedFirstLoop && previousFrame.id !== "wallboard") {
-        const id = previousFrame.id;
-        const baseURL = frameURLs[id];
-        if (baseURL) {
-          previousFrame.src = baseURL; // no cache busting
-        }
-      }
-
-      current = (current + 1) % frames.length;
-      const nextFrame = frames[current];
-      nextFrame.classList.add("visible");
-
-      if (current === 0 && !hasCompletedFirstLoop) {
-        hasCompletedFirstLoop = true;
-      }
-    }
-
-    // Start hard-timed rotation
-    setInterval(showNextFrame, screenDuration);
-
-    // Wallboard fallback visibility
-    board.addEventListener("load", () => {
-      if (board.classList.contains("visible")) {
-        document.getElementById("wallboard-loading").style.display = "none";
+    // Refresh hidden ones that aren't visible
+    frames.forEach((f, i) => {
+      if (i !== current) {
+        if (f.id === "rentalData") f.src = "rental-data.html";  // refresh when hidden
+        if (f.id === "teaminfoboard") f.src = teaminfoboardURL;
+        if (f.id === "teamleaderboard") f.src = teamleaderboardURL;
+        if (f.id === "newsletter") f.src = newsletterURL;
       }
     });
 
-    // Initial load
-    teaminfoboard.src = teaminfoboardURL;
-    teamleaderboard.src = teamleaderboardURL;
-    newsletter.src = newsletterURL;
-    board.src = wallboardURL;
-    rental.src = "rental-data.html";
+    current = (current + 1) % frames.length;
+    setTimeout(rotate, screenDuration);
+  }
 
-    // Show the first frame right away
-    frames[current].classList.add("visible");
-  </script>
+  rotate();
+</script>
 </body>
 </html>
