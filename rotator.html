@@ -123,7 +123,7 @@
         const id = previousFrame.id;
         const baseURL = frameURLs[id];
         if (baseURL) {
-          previousFrame.src = `${baseURL}?t=${Date.now()}`;
+          previousFrame.src = baseURL; // no cache busting
         }
       }
 
@@ -136,10 +136,10 @@
       }
     }
 
-    // Start strict interval rotation (unaffected by iframe load times)
+    // Start hard-timed rotation
     setInterval(showNextFrame, screenDuration);
 
-    // Wallboard load fallback
+    // Wallboard fallback visibility
     board.addEventListener("load", () => {
       if (board.classList.contains("visible")) {
         document.getElementById("wallboard-loading").style.display = "none";
@@ -153,7 +153,7 @@
     board.src = wallboardURL;
     rental.src = "rental-data.html";
 
-    // Show the first frame immediately
+    // Show the first frame right away
     frames[current].classList.add("visible");
   </script>
 </body>
