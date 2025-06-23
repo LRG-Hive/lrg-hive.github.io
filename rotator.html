@@ -28,7 +28,6 @@
       pointer-events: auto;
     }
 
-    /* Wallboard wrapper and loading screen */
     #wallboard-wrapper {
       position: absolute;
       width: 100vw;
@@ -40,8 +39,10 @@
 
     #wallboard-loading {
       position: absolute;
-      width: 100%;
-      height: 100%;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
       background: #000;
       color: white;
       font-family: sans-serif;
@@ -49,15 +50,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 10;
-    }
-
-    #wallboard.visible + #wallboard-loading {
-      display: flex;
-    }
-
-    #wallboard:not(.visible) + #wallboard-loading {
-      display: none;
+      z-index: 9999;
     }
   </style>
 </head>
@@ -127,7 +120,6 @@
       const currentFrame = frames[current];
       currentFrame.classList.remove("visible");
 
-      // If past first loop, refresh just-hidden frame
       if (hasCompletedFirstLoop) {
         const id = currentFrame.id;
         const baseURL = frameURLs[id];
@@ -150,9 +142,11 @@
       setTimeout(rotate, screenDuration);
     }
 
-    // Show loading until wallboard loads
+    // Hide wallboard loader once it's loaded *and* visible
     board.addEventListener("load", () => {
-      document.getElementById("wallboard-loading").style.display = "none";
+      if (board.classList.contains("visible")) {
+        document.getElementById("wallboard-loading").style.display = "none";
+      }
     });
 
     // Initial load
