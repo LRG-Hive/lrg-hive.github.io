@@ -83,43 +83,35 @@
     };
 
     let current = 0;
-    let reloadedThisCycle = new Set();
     let hasCompletedFirstLoop = false;
 
     function rotate() {
-      // Hide all frames
-      frames.forEach(f => f.classList.remove("visible"));
-
-      // Show current
+      // Hide the current frame
       const currentFrame = frames[current];
-      currentFrame.classList.add("visible");
+      currentFrame.classList.remove("visible");
 
-      // Refresh hidden Power Apps if not already refreshed this loop (after first loop only)
+      // Refresh it if it's in the reload map and we're past the first loop
       if (hasCompletedFirstLoop) {
-        frames.forEach((f, i) => {
-          const id = f.id;
-          const isVisible = (i === current);
-          const needsReload = frameReloadMap.hasOwnProperty(id);
-
-          if (!isVisible && needsReload && !reloadedThisCycle.has(id)) {
-            f.src = frameReloadMap[id];
-            reloadedThisCycle.add(id);
-          }
-        });
+        const currentId = currentFrame.id;
+        if (frameReloadMap.hasOwnProperty(currentId)) {
+          currentFrame.src = frameReloadMap[currentId];
+        }
       }
 
+      // Move to the next frame and show it
       current = (current + 1) % frames.length;
+      const nextFrame = frames[current];
+      nextFrame.classList.add("visible");
 
-      // After full loop, reset reload tracking and mark first loop as done
-      if (current === 0) {
-        reloadedThisCycle.clear();
+      // Mark first loop complete
+      if (current === 0 && !hasCompletedFirstLoop) {
         hasCompletedFirstLoop = true;
       }
 
       setTimeout(rotate, screenDuration);
     }
 
-    // Initial load (before rotation starts)
+    // Initial load (no rotation yet)
     teaminfoboard.src = teaminfoboardURL;
     teamleaderboard.src = teamleaderboardURL;
     newsletter.src = newsletterURL;
