@@ -75,10 +75,11 @@
 
     const frames = [board, teamleaderboard, board, teaminfoboard, board, newsletter, board, rental];
 
-    const frameReloadMap = {
+    const frameURLs = {
       teaminfoboard: teaminfoboardURL,
       teamleaderboard: teamleaderboardURL,
       newsletter: newsletterURL,
+      wallboard: wallboardURL,
       rentalData: "rental-data.html"
     };
 
@@ -86,15 +87,15 @@
     let hasCompletedFirstLoop = false;
 
     function rotate() {
-      // Hide the current frame
       const currentFrame = frames[current];
       currentFrame.classList.remove("visible");
 
-      // Refresh it if it's in the reload map and we're past the first loop
+      // Refresh that frame after hiding it, only after the first loop
       if (hasCompletedFirstLoop) {
-        const currentId = currentFrame.id;
-        if (frameReloadMap.hasOwnProperty(currentId)) {
-          currentFrame.src = frameReloadMap[currentId];
+        const id = currentFrame.id;
+        const baseURL = frameURLs[id];
+        if (baseURL) {
+          currentFrame.src = `${baseURL}?t=${Date.now()}`; // Add timestamp to prevent caching
         }
       }
 
@@ -103,7 +104,6 @@
       const nextFrame = frames[current];
       nextFrame.classList.add("visible");
 
-      // Mark first loop complete
       if (current === 0 && !hasCompletedFirstLoop) {
         hasCompletedFirstLoop = true;
       }
@@ -111,7 +111,7 @@
       setTimeout(rotate, screenDuration);
     }
 
-    // Initial load (no rotation yet)
+    // Initial load
     teaminfoboard.src = teaminfoboardURL;
     teamleaderboard.src = teamleaderboardURL;
     newsletter.src = newsletterURL;
