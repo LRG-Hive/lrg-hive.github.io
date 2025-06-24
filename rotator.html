@@ -55,7 +55,6 @@
     if (!team) window.location.href = "index.html";
   </script>
 
-  <iframe id="teaminfoboard" class="frame"></iframe>
   <iframe id="teamleaderboard" class="frame"></iframe>
   <iframe id="wallboard" class="frame"></iframe>
   <iframe id="rentalData" class="frame"></iframe>
@@ -65,14 +64,12 @@
     const overlay = document.getElementById("overlay");
 
     const frames = {
-      teaminfoboard: document.getElementById("teaminfoboard"),
       teamleaderboard: document.getElementById("teamleaderboard"),
       wallboard: document.getElementById("wallboard"),
       rentalData: document.getElementById("rentalData")
     };
 
     const frameOrder = [
-      "teaminfoboard",
       "wallboard",
       "teamleaderboard",
       "wallboard",
@@ -81,7 +78,6 @@
     ];
 
     const urls = {
-      teaminfoboard: `teaminfoboard.html?team=${team}`,
       teamleaderboard: `teamleaderboard.html?team=${team}`,
       wallboard: `teamwallboard.html?team=${team}`,
       rentalData: `rental-data.html`
