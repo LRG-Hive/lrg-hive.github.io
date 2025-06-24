@@ -22,5 +22,15 @@
     src="https://apps.powerapps.com/play/e/default-7879fb74-9557-4f5d-961d-4400d1ca3f61/a/261ae689-9c1c-40ec-9eea-c1acbca593fc?tenantId=7879fb74-9557-4f5d-961d-4400d1ca3f61&source=iframe"
     allowfullscreen
   ></iframe>
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const team = params.get("team");
+  const next = params.get("next");
+  if (team && next !== null) {
+    setTimeout(() => {
+      window.location.href = `redirector.html?team=${team}&i=${next}`;
+    }, 60000);
+  }
+</script>
 </body>
 </html>
