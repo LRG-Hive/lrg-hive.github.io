@@ -58,7 +58,6 @@
   <iframe id="teaminfoboard" class="frame"></iframe>
   <iframe id="teamleaderboard" class="frame"></iframe>
   <iframe id="wallboard" class="frame"></iframe>
-  <iframe id="newsletter" class="frame"></iframe>
   <iframe id="rentalData" class="frame"></iframe>
 
   <script>
@@ -68,7 +67,6 @@
     const frames = {
       teaminfoboard: document.getElementById("teaminfoboard"),
       teamleaderboard: document.getElementById("teamleaderboard"),
-      newsletter: document.getElementById("newsletter"),
       wallboard: document.getElementById("wallboard"),
       rentalData: document.getElementById("rentalData")
     };
@@ -78,8 +76,6 @@
       "wallboard",
       "teamleaderboard",
       "wallboard",
-      "newsletter",
-      "wallboard",
       "rentalData",
       "wallboard"
     ];
@@ -87,7 +83,6 @@
     const urls = {
       teaminfoboard: `teaminfoboard.html?team=${team}`,
       teamleaderboard: `teamleaderboard.html?team=${team}`,
-      newsletter: `newsletter.html`,
       wallboard: `teamwallboard.html?team=${team}`,
       rentalData: `rental-data.html`
     };
