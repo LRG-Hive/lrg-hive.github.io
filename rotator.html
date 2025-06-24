@@ -50,35 +50,9 @@
   <div id="overlay" class="overlay">Loading...</div>
 
   <script>
-    const team = localStorage.getItem("selectedTeam");
+    const params = new URLSearchParams(window.location.search);
+    const team = params.get("team");
     if (!team) window.location.href = "index.html";
-
-    const wallboardURLs = {
-      acorn: "https://wallboards.lrg.co.uk/wallboard/533",
-      central: "https://wallboards.lrg.co.uk/wallboard/520",
-      north: "https://wallboards.lrg.co.uk/wallboard/12",
-      south: "https://wallboards.lrg.co.uk/wallboard/531"
-    };
-
-    const teaminfoboardURLs = {
-      acorn: "https://apps.powerapps.com/play/e/default-7879fb74-9557-4f5d-961d-4400d1ca3f61/a/0c42cece-8aef-418c-9997-044212ce14c5?tenantId=7879fb74-9557-4f5d-961d-4400d1ca3f61&source=iframe",
-      central: "https://apps.powerapps.com/play/e/default-7879fb74-9557-4f5d-961d-4400d1ca3f61/a/05a47901-00b4-49cb-a327-97682f311da1?tenantId=7879fb74-9557-4f5d-961d-4400d1ca3f61&source=iframe",
-      north: "https://apps.powerapps.com/play/e/default-7879fb74-9557-4f5d-961d-4400d1ca3f61/a/e464a453-7fd0-4bb1-861e-18a3e3b40d99?tenantId=7879fb74-9557-4f5d-961d-4400d1ca3f61&source=iframe",
-      south: "https://apps.powerapps.com/play/e/default-7879fb74-9557-4f5d-961d-4400d1ca3f61/a/0fdc0534-6843-4f21-a476-c7a616337f49?tenantId=7879fb74-9557-4f5d-961d-4400d1ca3f61&source=iframe"
-    };
-
-    const teamleaderboardURLs = {
-      acorn: "https://apps.powerapps.com/play/e/default-7879fb74-9557-4f5d-961d-4400d1ca3f61/a/6705b567-3905-4d0e-bf13-abd1848bb4ec?tenantId=7879fb74-9557-4f5d-961d-4400d1ca3f61&source=iframe",
-      central: "https://apps.powerapps.com/play/e/default-7879fb74-9557-4f5d-961d-4400d1ca3f61/a/ce0ab1b7-1164-4329-975d-9f83b2efe72c?tenantId=7879fb74-9557-4f5d-961d-4400d1ca3f61&source=iframe",
-      north: "https://apps.powerapps.com/play/e/default-7879fb74-9557-4f5d-961d-4400d1ca3f61/a/f78f6339-1206-470f-8b6f-45a942b1b1a1?tenantId=7879fb74-9557-4f5d-961d-4400d1ca3f61&source=iframe",
-      south: "https://apps.powerapps.com/play/e/default-7879fb74-9557-4f5d-961d-4400d1ca3f61/a/1c16b2e5-17cf-49ef-ba6c-ad4c9339e120?tenantId=7879fb74-9557-4f5d-961d-4400d1ca3f61&source=iframe"
-    };
-
-    const newsletterURL = "https://apps.powerapps.com/play/e/default-7879fb74-9557-4f5d-961d-4400d1ca3f61/a/261ae689-9c1c-40ec-9eea-c1acbca593fc?tenantId=7879fb74-9557-4f5d-961d-4400d1ca3f61&source=iframe";
-
-    const wallboardURL = wallboardURLs[team];
-    const teaminfoboardURL = teaminfoboardURLs[team];
-    const teamleaderboardURL = teamleaderboardURLs[team];
   </script>
 
   <iframe id="teaminfoboard" class="frame"></iframe>
@@ -99,15 +73,23 @@
       rentalData: document.getElementById("rentalData")
     };
 
-    const frameOrder = ["teaminfoboard", "wallboard", "teamleaderboard", "wallboard", "newsletter", "wallboard", "rentalData", "wallboard"];
-    let currentIndex = 0;
+    const frameOrder = [
+      "teaminfoboard",
+      "wallboard",
+      "teamleaderboard",
+      "wallboard",
+      "newsletter",
+      "wallboard",
+      "rentalData",
+      "wallboard"
+    ];
 
     const urls = {
-      teaminfoboard: teaminfoboardURL,
-      teamleaderboard: teamleaderboardURL,
-      newsletter: newsletterURL,
-      wallboard: wallboardURL,
-      rentalData: "rental-data.html"
+      teaminfoboard: `teaminfoboard.html?team=${team}`,
+      teamleaderboard: `teamleaderboard.html?team=${team}`,
+      newsletter: `newsletter.html`,
+      wallboard: `teamwallboard.html?team=${team}`,
+      rentalData: `rental-data.html`
     };
 
     // Initial src setup
@@ -115,27 +97,26 @@
       frames[id].src = urls[id];
     }
 
+    let currentIndex = 0;
+
     function rotate() {
       const currentId = frameOrder[currentIndex];
       const currentFrame = frames[currentId];
 
-      // Hide all frames and show fallback
+      // Hide all frames and show overlay
       Object.values(frames).forEach(f => f.classList.remove("visible"));
       overlay.classList.add("visible");
 
-      // Force reflow (hack to trigger fade-in smoothly if needed)
-      void overlay.offsetWidth;
-
-      // Show target frame
+      // Show current frame and hide overlay after load
       currentFrame.onload = () => overlay.classList.remove("visible");
       currentFrame.classList.add("visible");
 
-      // Schedule transition
+      // Schedule next transition
       setTimeout(() => {
-        // Refresh non-wallboard frames once after being hidden
+        // Refresh non-wallboard pages once per cycle when they're about to come back
         for (const id of Object.keys(frames)) {
           if (id !== "wallboard" && id !== currentId && frameOrder[(currentIndex + 1) % frameOrder.length] === "wallboard") {
-            frames[id].src = urls[id];
+            frames[id].src = urls[id]; // Reload
           }
         }
 
