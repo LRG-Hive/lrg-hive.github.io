@@ -28,24 +28,19 @@
     if (!team) window.location.href = "index.html";
 
     const frameOrder = [
-      `teaminfoboard.html?team=${team}`,
-      `teamwallboard.html?team=${team}`,
-      `teamleaderboard.html?team=${team}`,
-      `teamwallboard.html?team=${team}`,
-      `rental-data.html`,
-      `teamwallboard.html?team=${team}`
+      `teaminfoboard.html?team=${team}&i=${index}`,
+      `teamwallboard.html?team=${team}&i=${index}`,
+      `teamleaderboard.html?team=${team}&i=${index}`,
+      `teamwallboard.html?team=${team}&i=${index}`,
+      `rental-data.html?team=${team}&i=${index}`,
+      `teamwallboard.html?team=${team}&i=${index}`
     ];
 
+    const targetPage = frameOrder[index % frameOrder.length];
     const nextIndex = (index + 1) % frameOrder.length;
-    const nextURL = `redirector.html?team=${team}&i=${nextIndex}`;
 
-    // Redirect to the target screen now
-    window.location.href = frameOrder[index];
-
-    // After screenDuration, come back to redirector and go to next screen
-    setTimeout(() => {
-      window.location.href = nextURL;
-    }, 60000);
+    // Inject the redirect target and next index as query string for scheduling
+    window.location.href = `${targetPage}&next=${nextIndex}`;
   </script>
 </body>
 </html>
