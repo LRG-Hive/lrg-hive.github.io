@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Team Info Board</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: black;
+      height: 100%;
+    }
+    iframe {
+      width: 100vw;
+      height: 100vh;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const team = params.get("team");
+
+    const teaminfoboardURLs = {
+      acorn: "https://apps.powerapps.com/play/e/default-7879fb74-9557-4f5d-961d-4400d1ca3f61/a/0c42cece-8aef-418c-9997-044212ce14c5?tenantId=7879fb74-9557-4f5d-961d-4400d1ca3f61&source=iframe",
+      central: "https://apps.powerapps.com/play/e/default-7879fb74-9557-4f5d-961d-4400d1ca3f61/a/05a47901-00b4-49cb-a327-97682f311da1?tenantId=7879fb74-9557-4f5d-961d-4400d1ca3f61&source=iframe",
+      north: "https://apps.powerapps.com/play/e/default-7879fb74-9557-4f5d-961d-4400d1ca3f61/a/e464a453-7fd0-4bb1-861e-18a3e3b40d99?tenantId=7879fb74-9557-4f5d-961d-4400d1ca3f61&source=iframe",
+      south: "https://apps.powerapps.com/play/e/default-7879fb74-9557-4f5d-961d-4400d1ca3f61/a/0fdc0534-6843-4f21-a476-c7a616337f49?tenantId=7879fb74-9557-4f5d-961d-4400d1ca3f61&source=iframe"
+    };
+
+    if (!team || !teaminfoboardURLs[team]) {
+      document.body.innerHTML = "<h1 style='color:white;'>Invalid or missing team</h1>";
+    } else {
+      const iframe = document.createElement("iframe");
+      iframe.src = teaminfoboardURLs[team];
+      iframe.allowFullscreen = true;
+      document.body.appendChild(iframe);
+    }
+  </script>
+</body>
+</html>
