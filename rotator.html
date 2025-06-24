@@ -2,119 +2,50 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Team Wallboard Rotator</title>
+  <title>Wallboard Redirector</title>
   <style>
     html, body {
+      background: black;
       margin: 0;
       padding: 0;
-      background: #000;
-      overflow: hidden;
-    }
-    .frame {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      border: none;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.5s ease-in-out;
-    }
-    .visible {
-      opacity: 1;
-      pointer-events: auto;
-    }
-    .overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: #000;
-      color: #fff;
-      font-size: 2em;
+      color: white;
       display: flex;
       justify-content: center;
       align-items: center;
-      z-index: 999;
-      opacity: 0;
-      transition: opacity 0.2s ease-in-out;
-    }
-    .overlay.visible {
-      opacity: 1;
+      height: 100vh;
+      font-family: sans-serif;
     }
   </style>
 </head>
 <body>
+  <div id="status">Loading next screen...</div>
+
   <script>
     const params = new URLSearchParams(window.location.search);
     const team = params.get("team");
+    const index = parseInt(params.get("i")) || 0;
+
     if (!team) window.location.href = "index.html";
-  </script>
-
-  <iframe id="teamleaderboard" class="frame"></iframe>
-  <iframe id="wallboard" class="frame"></iframe>
-  <iframe id="rentalData" class="frame"></iframe>
-
-  <script>
-    const screenDuration = 60000;
-    const overlay = document.getElementById("overlay");
-
-    const frames = {
-      teamleaderboard: document.getElementById("teamleaderboard"),
-      wallboard: document.getElementById("wallboard"),
-      rentalData: document.getElementById("rentalData")
-    };
 
     const frameOrder = [
-      "wallboard",
-      "teamleaderboard",
-      "wallboard",
-      "rentalData",
-      "wallboard"
+      `teaminfoboard.html?team=${team}`,
+      `teamwallboard.html?team=${team}`,
+      `teamleaderboard.html?team=${team}`,
+      `teamwallboard.html?team=${team}`,
+      `rental-data.html`,
+      `teamwallboard.html?team=${team}`
     ];
 
-    const urls = {
-      teamleaderboard: `teamleaderboard.html?team=${team}`,
-      wallboard: `teamwallboard.html?team=${team}`,
-      rentalData: `rental-data.html`
-    };
+    const nextIndex = (index + 1) % frameOrder.length;
+    const nextURL = `redirector.html?team=${team}&i=${nextIndex}`;
 
-    // Initial src setup
-    for (const id in frames) {
-      frames[id].src = urls[id];
-    }
+    // Redirect to the target screen now
+    window.location.href = frameOrder[index];
 
-    let currentIndex = 0;
-
-    function rotate() {
-      const currentId = frameOrder[currentIndex];
-      const currentFrame = frames[currentId];
-
-      // Hide all frames and show overlay
-      Object.values(frames).forEach(f => f.classList.remove("visible"));
-      overlay.classList.add("visible");
-
-      // Show current frame and hide overlay after load
-      currentFrame.onload = () => overlay.classList.remove("visible");
-      currentFrame.classList.add("visible");
-
-      // Schedule next transition
-      setTimeout(() => {
-        // Refresh non-wallboard pages once per cycle when they're about to come back
-        for (const id of Object.keys(frames)) {
-          if (id !== "wallboard" && id !== currentId && frameOrder[(currentIndex + 1) % frameOrder.length] === "wallboard") {
-            frames[id].src = urls[id]; // Reload
-          }
-        }
-
-        currentIndex = (currentIndex + 1) % frameOrder.length;
-        rotate();
-      }, screenDuration);
-    }
-
-    rotate();
+    // After screenDuration, come back to redirector and go to next screen
+    setTimeout(() => {
+      window.location.href = nextURL;
+    }, 60000);
   </script>
 </body>
 </html>
