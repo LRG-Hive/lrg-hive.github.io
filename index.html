@@ -42,8 +42,7 @@
 
   <script>
     function selectTeam(team) {
-      localStorage.setItem("selectedTeam", team);
-      window.location.href = "rotator.html";
+      window.location.href = `rotator.html?team=${team}`;
     }
   </script>
 </body>
