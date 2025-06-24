@@ -28,6 +28,9 @@
   </style>
 </head>
 <body>
+  <iframe id="frameA" class="frame"></iframe>
+  <iframe id="frameB" class="frame"></iframe>
+
   <script>
     const team = localStorage.getItem("selectedTeam");
     if (!team) window.location.href = "index.html";
@@ -54,74 +57,53 @@
     };
 
     const newsletterURL = "https://apps.powerapps.com/play/e/default-7879fb74-9557-4f5d-961d-4400d1ca3f61/a/261ae689-9c1c-40ec-9eea-c1acbca593fc?tenantId=7879fb74-9557-4f5d-961d-4400d1ca3f61&source=iframe";
-    const wallboardURL = wallboardURLs[team];
-    const teaminfoboardURL = teaminfoboardURLs[team];
-    const teamleaderboardURL = teamleaderboardURLs[team];
+    const rentalDataURL = "rental-data.html";
+
+    const urls = [
+      wallboardURLs[team],
+      teamleaderboardURLs[team],
+      wallboardURLs[team],
+      teaminfoboardURLs[team],
+      wallboardURLs[team],
+      newsletterURL,
+      wallboardURLs[team],
+      rentalDataURL,
+      wallboardURLs[team]
+    ];
+
+    const duration = 60000;
+    let index = 0;
+    let activeFrame = document.getElementById("frameA");
+    let preloadFrame = document.getElementById("frameB");
+
+    function rotateFrames() {
+      // Swap frames
+      const temp = activeFrame;
+      activeFrame = preloadFrame;
+      preloadFrame = temp;
+
+      // Show active frame, hide preload frame
+      activeFrame.classList.add("visible");
+      preloadFrame.classList.remove("visible");
+
+      // Advance index
+      index = (index + 1) % urls.length;
+
+      // Preload next
+      preloadFrame.src = urls[index];
+
+      // Rotate again in 60 seconds
+      setTimeout(rotateFrames, duration);
+    }
+
+    // Initial load
+    activeFrame.src = urls[index];
+    activeFrame.classList.add("visible");
+
+    index = (index + 1) % urls.length;
+    preloadFrame.src = urls[index];
+
+    setTimeout(rotateFrames, duration);
   </script>
-
-  <iframe id="teaminfoboard" class="frame"></iframe>
-  <iframe id="teamleaderboard" class="frame"></iframe>
-  <iframe id="wallboard" class="frame"></iframe>
-  <iframe id="newsletter" class="frame"></iframe>
-  <iframe id="rentalData" class="frame"></iframe>
-
-<script>
-  const screenDuration = 60000;
-
-  const teaminfoboard = document.getElementById("teaminfoboard");
-  const teamleaderboard = document.getElementById("teamleaderboard");
-  const newsletter = document.getElementById("newsletter");
-  const board = document.getElementById("wallboard");
-  const rental = document.getElementById("rentalData");
-
-  teaminfoboard.src = teaminfoboardURL;
-  teamleaderboard.src = teamleaderboardURL;
-  newsletter.src = newsletterURL;
-  board.src = wallboardURL;
-  rental.src = "rental-data.html";  // static first load
-
-  const frames = [board, teamleaderboard, board, teaminfoboard, board, newsletter, board, rental, board];
-
-  let current = 0;
-  let refreshedFrames = new Set();
-
-  function rotate() {
-    // Hide all
-    frames.forEach(f => f.classList.remove("visible"));
-
-    // Show current
-    const currentFrame = frames[current];
-    currentFrame.classList.add("visible");
-
-    // Refresh only if not already refreshed this cycle
-    if (!refreshedFrames.has(currentFrame.id)) {
-      if (currentFrame.id === "rentalData") {
-        rental.src = "rental-data.html";
-      }
-      if (currentFrame.id === "teaminfoboard") {
-        teaminfoboard.src = teaminfoboardURL;
-      }
-      if (currentFrame.id === "teamleaderboard") {
-        teamleaderboard.src = teamleaderboardURL;
-      }
-      if (currentFrame.id === "newsletter") {
-        newsletter.src = newsletterURL;
-      }
-
-      refreshedFrames.add(currentFrame.id);
-    }
-
-    current = (current + 1) % frames.length;
-
-    // If we’ve completed a full loop, clear refreshed flags
-    if (current === 0) {
-      refreshedFrames.clear();
-    }
-
-    setTimeout(rotate, screenDuration);
-  }
-
-  rotate();
-</script>
 </body>
 </html>
