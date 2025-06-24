@@ -42,7 +42,8 @@
 
   <script>
     function selectTeam(team) {
-      window.location.href = `redirector.html?team=${team}`;
+      localStorage.setItem("selectedTeam", team);
+      window.location.href = "rotator.html";
     }
   </script>
 </body>
