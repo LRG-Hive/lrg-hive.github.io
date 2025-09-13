@@ -9,19 +9,28 @@
       padding: 0;
       background: #000;
       overflow: hidden;
-      display: flex;
     }
     .frame {
-      width: 50vw;   /* side by side */
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
       height: 100vh;
       border: none;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease-in-out;
+    }
+    .visible {
+      opacity: 1;
+      pointer-events: auto;
     }
   </style>
 </head>
 <body>
-  <!-- Left: permanent wallboard -->
-  <iframe id="wallboardFrame" class="frame"></iframe>
-  <!-- Right: rotating content -->
+  <!-- Permanent wallboard -->
+  <iframe id="wallboardFrame" class="frame visible"></iframe>
+  <!-- Overlay for rotating content -->
   <iframe id="rotationFrame" class="frame"></iframe>
 
   <script>
@@ -52,7 +61,7 @@
     const newsletterURL = "https://apps.powerapps.com/play/e/default-7879fb74-9557-4f5d-961d-4400d1ca3f61/a/261ae689-9c1c-40ec-9eea-c1acbca593fc?tenantId=7879fb74-9557-4f5d-961d-4400d1ca3f61&source=iframe";
     const rentalDataURL = "rental-data.html";
 
-    // Rotation list (NO wallboard here!)
+    // URLs to rotate (no wallboard here!)
     const rotationURLs = [
       teamleaderboardURLs[team],
       teaminfoboardURLs[team],
@@ -63,20 +72,26 @@
     const wallboardFrame = document.getElementById("wallboardFrame");
     const rotationFrame = document.getElementById("rotationFrame");
 
-    // Set permanent wallboard
+    // Permanent wallboard
     wallboardFrame.src = wallboardURLs[team];
 
-    // Rotation logic
     let index = 0;
-    const duration = 60000; // 1 min
+    const duration = 60000; // 60s
 
     function rotate() {
       rotationFrame.src = rotationURLs[index];
-      index = (index + 1) % rotationURLs.length;
-      setTimeout(rotate, duration);
+      rotationFrame.classList.add("visible");
+
+      // Hide it again after the slot
+      setTimeout(() => {
+        rotationFrame.classList.remove("visible");
+        index = (index + 1) % rotationURLs.length;
+        setTimeout(rotate, duration); // schedule next
+      }, duration);
     }
 
-    rotate(); // start rotation
+    // Kick off the cycle
+    setTimeout(rotate, duration);
   </script>
 </body>
 </html>
