@@ -28,9 +28,7 @@
   </style>
 </head>
 <body>
-  <!-- Permanent wallboard -->
   <iframe id="wallboardFrame" class="frame visible"></iframe>
-  <!-- Overlay for rotating content -->
   <iframe id="rotationFrame" class="frame"></iframe>
 
   <script>
@@ -61,37 +59,45 @@
     const newsletterURL = "https://apps.powerapps.com/play/e/default-7879fb74-9557-4f5d-961d-4400d1ca3f61/a/261ae689-9c1c-40ec-9eea-c1acbca593fc?tenantId=7879fb74-9557-4f5d-961d-4400d1ca3f61&source=iframe";
     const rentalDataURL = "rental-data.html";
 
-    // URLs to rotate (no wallboard here!)
     const rotationURLs = [
       teamleaderboardURLs[team],
       teaminfoboardURLs[team],
       newsletterURL,
-      rentalDataURL
+      rentalDataURL,
     ];
 
     const wallboardFrame = document.getElementById("wallboardFrame");
     const rotationFrame = document.getElementById("rotationFrame");
 
-    // Permanent wallboard
+    // permanent wallboard URL
     wallboardFrame.src = wallboardURLs[team];
 
     let index = 0;
     const duration = 60000; // 60s
 
-    function rotate() {
-      rotationFrame.src = rotationURLs[index];
-      rotationFrame.classList.add("visible");
+    function cycle() {
+      // 1. show wallboard
+      wallboardFrame.classList.add("visible");
+      rotationFrame.classList.remove("visible");
 
-      // Hide it again after the slot
+      // 2. preload next rotation URL while wallboard is showing
+      rotationFrame.src = rotationURLs[index];
+
+      // 3. after 60s, show rotation
       setTimeout(() => {
-        rotationFrame.classList.remove("visible");
-        index = (index + 1) % rotationURLs.length;
-        setTimeout(rotate, duration); // schedule next
+        wallboardFrame.classList.remove("visible");
+        rotationFrame.classList.add("visible");
+
+        // 4. after another 60s, move index and repeat
+        setTimeout(() => {
+          index = (index + 1) % rotationURLs.length;
+          cycle();
+        }, duration);
+
       }, duration);
     }
 
-    // Kick off the cycle
-    setTimeout(rotate, duration);
+    cycle(); // start cycle
   </script>
 </body>
 </html>
