@@ -9,27 +9,20 @@
       padding: 0;
       background: #000;
       overflow: hidden;
+      display: flex;
     }
     .frame {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100vw;
+      width: 50vw;   /* side by side */
       height: 100vh;
       border: none;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.5s ease-in-out;
-    }
-    .visible {
-      opacity: 1;
-      pointer-events: auto;
     }
   </style>
 </head>
 <body>
-  <iframe id="frameA" class="frame"></iframe>
-  <iframe id="frameB" class="frame"></iframe>
+  <!-- Left: permanent wallboard -->
+  <iframe id="wallboardFrame" class="frame"></iframe>
+  <!-- Right: rotating content -->
+  <iframe id="rotationFrame" class="frame"></iframe>
 
   <script>
     const team = localStorage.getItem("selectedTeam");
@@ -59,51 +52,32 @@
     const newsletterURL = "https://apps.powerapps.com/play/e/default-7879fb74-9557-4f5d-961d-4400d1ca3f61/a/261ae689-9c1c-40ec-9eea-c1acbca593fc?tenantId=7879fb74-9557-4f5d-961d-4400d1ca3f61&source=iframe";
     const rentalDataURL = "rental-data.html";
 
-    const urls = [
-      wallboardURLs[team],
+    // Rotation list (NO wallboard here!)
+    const rotationURLs = [
       teamleaderboardURLs[team],
-      wallboardURLs[team],
       teaminfoboardURLs[team],
-      wallboardURLs[team],
       newsletterURL,
-      wallboardURLs[team],
-      rentalDataURL,
-      wallboardURLs[team]
+      rentalDataURL
     ];
 
-    const duration = 60000;
+    const wallboardFrame = document.getElementById("wallboardFrame");
+    const rotationFrame = document.getElementById("rotationFrame");
+
+    // Set permanent wallboard
+    wallboardFrame.src = wallboardURLs[team];
+
+    // Rotation logic
     let index = 0;
-    let activeFrame = document.getElementById("frameA");
-    let preloadFrame = document.getElementById("frameB");
+    const duration = 60000; // 1 min
 
-    function rotateFrames() {
-      // Swap frames
-      const temp = activeFrame;
-      activeFrame = preloadFrame;
-      preloadFrame = temp;
-
-      // Show active frame, hide preload frame
-      activeFrame.classList.add("visible");
-      preloadFrame.classList.remove("visible");
-
-      // Advance index
-      index = (index + 1) % urls.length;
-
-      // Preload next
-      preloadFrame.src = urls[index];
-
-      // Rotate again in 60 seconds
-      setTimeout(rotateFrames, duration);
+    function rotate() {
+      rotationFrame.src = rotationURLs[index];
+      index = (index + 1) % rotationURLs.length;
+      setTimeout(rotate, duration);
     }
 
-    // Initial load
-    activeFrame.src = urls[index];
-    activeFrame.classList.add("visible");
-
-    index = (index + 1) % urls.length;
-    preloadFrame.src = urls[index];
-
-    setTimeout(rotateFrames, duration);
+    rotate(); // start rotation
   </script>
 </body>
 </html>
+
