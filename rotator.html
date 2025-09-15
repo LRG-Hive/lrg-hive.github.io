@@ -28,8 +28,8 @@
   </style>
 </head>
 <body>
-  <iframe id="wallboardFrame" class="frame visible"></iframe>
-  <iframe id="rotationFrame" class="frame"></iframe>
+  <iframe id="frameA" class="frame"></iframe>
+  <iframe id="frameB" class="frame"></iframe>
 
   <script>
     const team = localStorage.getItem("selectedTeam");
@@ -59,46 +59,51 @@
     const newsletterURL = "https://apps.powerapps.com/play/e/default-7879fb74-9557-4f5d-961d-4400d1ca3f61/a/261ae689-9c1c-40ec-9eea-c1acbca593fc?tenantId=7879fb74-9557-4f5d-961d-4400d1ca3f61&source=iframe";
     const rentalDataURL = "rental-data.html";
 
-    const rotationURLs = [
+    const urls = [
+      wallboardURLs[team],
       teamleaderboardURLs[team],
+      wallboardURLs[team],
       teaminfoboardURLs[team],
+      wallboardURLs[team],
       newsletterURL,
+      wallboardURLs[team],
       rentalDataURL,
+      wallboardURLs[team]
     ];
 
-    const wallboardFrame = document.getElementById("wallboardFrame");
-    const rotationFrame = document.getElementById("rotationFrame");
-
-    // permanent wallboard URL
-    wallboardFrame.src = wallboardURLs[team];
-
+    const duration = 60000;
     let index = 0;
-    const duration = 60000; // 60s
+    let activeFrame = document.getElementById("frameA");
+    let preloadFrame = document.getElementById("frameB");
 
-    function cycle() {
-      // 1. show wallboard
-      wallboardFrame.classList.add("visible");
-      rotationFrame.classList.remove("visible");
+    function rotateFrames() {
+      // Swap frames
+      const temp = activeFrame;
+      activeFrame = preloadFrame;
+      preloadFrame = temp;
 
-      // 2. preload next rotation URL while wallboard is showing
-      rotationFrame.src = rotationURLs[index];
+      // Show active frame, hide preload frame
+      activeFrame.classList.add("visible");
+      preloadFrame.classList.remove("visible");
 
-      // 3. after 60s, show rotation
-      setTimeout(() => {
-        wallboardFrame.classList.remove("visible");
-        rotationFrame.classList.add("visible");
+      // Advance index
+      index = (index + 1) % urls.length;
 
-        // 4. after another 60s, move index and repeat
-        setTimeout(() => {
-          index = (index + 1) % rotationURLs.length;
-          cycle();
-        }, duration);
+      // Preload next
+      preloadFrame.src = urls[index];
 
-      }, duration);
+      // Rotate again in 60 seconds
+      setTimeout(rotateFrames, duration);
     }
 
-    cycle(); // start cycle
+    // Initial load
+    activeFrame.src = urls[index];
+    activeFrame.classList.add("visible");
+
+    index = (index + 1) % urls.length;
+    preloadFrame.src = urls[index];
+
+    setTimeout(rotateFrames, duration);
   </script>
 </body>
 </html>
-
