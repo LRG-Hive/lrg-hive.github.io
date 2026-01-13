@@ -35,13 +35,6 @@
     const team = localStorage.getItem("selectedTeam");
     if (!team) window.location.href = "index.html";
 
-    const wallboardURLs = {
-      acorn:   "https://wallboards.lrg.co.uk/wallboard/533",
-      central: "https://wallboards.lrg.co.uk/wallboard/520",
-      north:   "https://wallboards.lrg.co.uk/wallboard/12",
-      south:   "https://wallboards.lrg.co.uk/wallboard/531"
-    };
-
     const teaminfoboardURLs = {
       acorn:   "https://hive-eq.uk/acorn_infoboard",
       central: "https://hive-eq.uk/central_infoboard",
@@ -60,15 +53,10 @@
     const rentalDataURL = "rental-data.html";
 
     const urls = [
-      wallboardURLs[team],
       teamleaderboardURLs[team],
-      wallboardURLs[team],
       teaminfoboardURLs[team],
-      wallboardURLs[team],
       newsletterURL,
-      wallboardURLs[team],
       rentalDataURL,
-      wallboardURLs[team]
     ];
 
     const duration = 60000;
