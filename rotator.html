@@ -42,17 +42,25 @@
       south:   "https://hive-eq.uk/south_infoboard"
     };
 
+    const officebusinessURLs = {
+      acorn:   "https://hive-eq.uk/office_performance",
+      central: "https://hive-eq.uk/office_performance",
+      north:   "https://hive-eq.uk/office_performance",
+      south:   "https://hive-eq.uk/office_performance"
+    };
+
     const teamleaderboardURLs = {
-      acorn:   "https://hive-eq.uk/business_performance",
-      central: "https://hive-eq.uk/business_performance",
-      north:   "https://hive-eq.uk/business_performance",
-      south:   "https://hive-eq.uk/business_performance"
+      acorn:   "https://hive-eq.uk/individual_performance",
+      central: "https://hive-eq.uk/individual_performance",
+      north:   "https://hive-eq.uk/individual_performance",
+      south:   "https://hive-eq.uk/individual_performance"
     };
 
     const newsletterURL = "https://hive-eq.uk/newsletter";
     const rentalDataURL = "rental-data.html";
 
     const urls = [
+      officebusinessURLs[team],
       teamleaderboardURLs[team],
       teaminfoboardURLs[team],
       newsletterURL,
