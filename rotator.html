@@ -35,13 +35,6 @@
     const team = localStorage.getItem("selectedTeam");
     if (!team) window.location.href = "index.html";
 
-    const teaminfoboardURLs = {
-      acorn:   "https://hive-eq.uk/acorn_infoboard",
-      central: "https://hive-eq.uk/central_infoboard",
-      north:   "https://hive-eq.uk/north_infoboard",
-      south:   "https://hive-eq.uk/south_infoboard"
-    };
-
     const officebusinessURLs = {
       acorn:   "https://hive-eq.uk/display/office_performance",
       central: "https://hive-eq.uk/display/office_performance",
@@ -57,14 +50,11 @@
     };
 
     const newsletterURL = "https://hive-eq.uk/newsletter";
-    const rentalDataURL = "rental-data.html";
 
     const urls = [
       officebusinessURLs[team],
       teamleaderboardURLs[team],
-      teaminfoboardURLs[team],
       newsletterURL,
-      rentalDataURL,
     ];
 
     const duration = 60000;
